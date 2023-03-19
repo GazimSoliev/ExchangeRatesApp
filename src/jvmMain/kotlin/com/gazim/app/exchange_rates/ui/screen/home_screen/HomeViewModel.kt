@@ -1,5 +1,7 @@
 package com.gazim.app.exchange_rates.ui.screen.home_screen
 
+import com.gazim.app.exchange_rates.ui.model.DateValue
+import com.gazim.app.exchange_rates.ui.model.ValutePresentation
 import com.gazim.libray.exchange_rates.model.ExchangeRatesDataProperty
 import com.gazim.libray.exchange_rates.model.IVarCus
 import com.gazim.libray.exchange_rates.repository.ExchangeRatesRepository

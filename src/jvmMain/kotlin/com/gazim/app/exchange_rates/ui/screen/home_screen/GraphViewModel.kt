@@ -1,5 +1,9 @@
 package com.gazim.app.exchange_rates.ui.screen.home_screen
 
+import com.gazim.app.exchange_rates.ui.model.DateValue
+import com.gazim.app.exchange_rates.ui.model.GraphData
+import com.gazim.app.exchange_rates.ui.model.GraphPoints
+import com.gazim.app.exchange_rates.ui.model.Point
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,7 +22,7 @@ class GraphViewModel(private val dateValueList: List<DateValue>) {
         )
     )
 
-    fun calculateGraph(width: Float, height: Float): Job {
+    fun calculateGraph(width: Float, height: Float, offsetY: Float, offsetX: Float = 30f): Job {
         job?.cancel()
         job = viewModelScope.launch(Dispatchers.Default) {
             val ls = dateValueList.map(DateValue::value)
@@ -49,7 +53,7 @@ class GraphViewModel(private val dateValueList: List<DateValue>) {
             val li = current.map {
                 println(it)
                 println(it.y - min)
-                it.copy(y = ((it.y - min) / offs) * currentHeight)
+                it.copy(y = ((it.y - min) / offs) * currentHeight + offsetY)
             }
             println(li)
             state.value = GraphData(
@@ -62,7 +66,7 @@ class GraphViewModel(private val dateValueList: List<DateValue>) {
                         y = offset.y
                     )
                 }.also { println(it) },
-                lines = separate(5, currentHeight).map { it.toFloat() },
+                lines = separate(5, currentHeight).map { it.toFloat() + offsetY },
                 max = max,
                 min = min
             )

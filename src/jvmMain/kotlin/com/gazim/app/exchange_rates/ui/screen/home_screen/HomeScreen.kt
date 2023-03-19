@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gazim.app.exchange_rates.ui.components.GraphValueChanging
+import com.gazim.app.exchange_rates.ui.model.ValutePresentation
 import java.time.LocalDate
 
 @Composable
@@ -122,7 +123,7 @@ fun Item(
                     textMeasurer = textMeasurer,
                     pointColor = pointColor
                 ) {
-                    viewModel.calculateGraph(width = it.width, height = it.height - textHeight)
+                    viewModel.calculateGraph(width = it.width, height = it.height - textHeight * 2, offsetY = 0f)
                 }
             }
         }

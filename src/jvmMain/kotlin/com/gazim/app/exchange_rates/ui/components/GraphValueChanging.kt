@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.*
 import androidx.compose.ui.unit.dp
-import com.gazim.app.exchange_rates.ui.screen.home_screen.GraphData
+import com.gazim.app.exchange_rates.ui.model.GraphData
 
 
 @OptIn(ExperimentalTextApi::class)
@@ -27,7 +27,7 @@ inline fun GraphValueChanging(
     crossinline sizeMeasure: (Size) -> Unit
 ) {
     Canvas(
-        modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+        modifier.padding(vertical = 16.dp, horizontal = 16.dp)
     ) {
         sizeMeasure(size)
         graphData.lines.forEach {
