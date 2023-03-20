@@ -27,7 +27,7 @@ inline fun GraphValueChanging(
     crossinline sizeMeasure: (Size) -> Unit
 ) {
     Canvas(
-        modifier.padding(vertical = 16.dp, horizontal = 16.dp)
+        modifier.padding(vertical = 8.dp, horizontal = 16.dp)
     ) {
         sizeMeasure(size)
         graphData.lines.forEach {

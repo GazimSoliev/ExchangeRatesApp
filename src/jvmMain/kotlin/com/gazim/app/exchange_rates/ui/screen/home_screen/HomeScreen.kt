@@ -123,7 +123,7 @@ fun Item(
                     textMeasurer = textMeasurer,
                     pointColor = pointColor
                 ) {
-                    viewModel.calculateGraph(width = it.width, height = it.height - textHeight * 2, offsetY = 0f)
+                    viewModel.calculateGraph(width = it.width, height = it.height - textHeight, offsetY = 0f)
                 }
             }
         }
