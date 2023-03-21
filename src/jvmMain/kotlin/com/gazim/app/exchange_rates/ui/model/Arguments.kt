@@ -1,3 +1,5 @@
+package com.gazim.app.exchange_rates.ui.model
+
 import kotlin.reflect.KClass
 
 interface Arguments {

@@ -31,22 +31,20 @@ class HomeViewModel {
         }
         list.value = lastFiveDay.first().valutes.mapIndexed { index, it ->
             with(it) {
-                ValutePresentation(
-                    id = index,
+                ValutePresentation(id = index,
                     nominal = nominal.toString(),
-                    value = value.toString(),
+                    value = "$value ₽",
                     charCode = charCode,
                     name = name,
                     numCode = numCode,
                     changingLastFiveDay = lastFiveDay.map { c ->
                         DateValue(
-                            date = c.date.run { "$dayOfMonth.$monthValue" },
-                            value = c.valutes[index].value
+                            date = c.date.run { "$dayOfMonth.$monthValue" }, value = c.valutes[index].value
                         )
-                    }.reversed()
+                    }.reversed(),
+                    country = ValuteFlag.values().find { (it.valute == charCode).also(::println) }
                 )
             }
-        }.also { println(it) }
+        }
     }
-
 }

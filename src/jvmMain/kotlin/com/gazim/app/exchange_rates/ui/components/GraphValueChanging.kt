@@ -22,17 +22,18 @@ inline fun GraphValueChanging(
     markupLineColor: Color,
     pointColor: Color,
     dateStyle: TextStyle,
+    valueStyle: TextStyle,
     graphData: GraphData,
     textMeasurer: TextMeasurer,
     crossinline sizeMeasure: (Size) -> Unit
 ) {
     Canvas(
-        modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+        modifier.padding(vertical = 8.dp, horizontal = 32.dp)
     ) {
         sizeMeasure(size)
-        graphData.lines.forEach {
-            drawLine(markupLineColor, start = Offset(x = 0f, y = it), end = Offset(x = size.width, y = it))
-        }
+//        graphData.lines.forEach {
+//            drawLine(markupLineColor, start = Offset(x = 0f, y = it), end = Offset(x = size.width, y = it))
+//        }
         drawPoints(
             points = graphData.list.map { Offset(it.x, it.y) },
             color = lineColor,
@@ -46,16 +47,28 @@ inline fun GraphValueChanging(
             cap = StrokeCap.Round
         )
         graphData.points.forEach {
-            val textLayoutResult = textMeasurer.measure(
+            val textDate = textMeasurer.measure(
                 text = buildAnnotatedString { append(it.date) },
                 style = dateStyle,
                 maxLines = 1
             )
+            val textValue = textMeasurer.measure(
+                text = buildAnnotatedString {
+                    append(it.value)
+                },
+                style = valueStyle,
+                maxLines = 1
+            )
             drawText(
-                textLayoutResult = textLayoutResult,
+                textLayoutResult = textDate,
                 topLeft = Offset(
-                    it.x - (textLayoutResult.size.width / 2),
-                    size.height - textLayoutResult.size.height + 5
+                    it.x - (textDate.size.width / 2),
+                    size.height - textDate.size.height + 5
+                )
+            )
+            drawText(
+                textLayoutResult = textValue, topLeft = Offset(
+                    it.x - textValue.size.width / 2, 0f
                 )
             )
         }

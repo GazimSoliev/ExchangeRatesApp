@@ -1,3 +1,5 @@
+package com.gazim.app.exchange_rates.ui
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -248,9 +250,3 @@ fun ExchangeRatesApp() {
 //        }
 //    }
 //}
-
-
-data class Person(
-    val name: String,
-    val surname: String
-)

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-class GraphViewModel(private val dateValueList: List<DateValue>) {
+class ItemValuteViewModel(private val dateValueList: List<DateValue>) {
     private var width: Int = 0
     private var height: Int = 0
     private val viewModelScope = CoroutineScope(Dispatchers.Default)
@@ -28,8 +28,8 @@ class GraphViewModel(private val dateValueList: List<DateValue>) {
             val ls = dateValueList.map(DateValue::value)
             val currentWidth = width.toInt()
             val currentHeight = height.toInt()
-            if (currentWidth == this@GraphViewModel.width &&
-                currentHeight == this@GraphViewModel.height
+            if (currentWidth == this@ItemValuteViewModel.width &&
+                currentHeight == this@ItemValuteViewModel.height
             ) return@launch
             val xs = separate(ls.size, currentWidth)
             val l = List(ls.size) { Point(x = xs[it].toFloat(), ls[it]) }
@@ -39,23 +39,14 @@ class GraphViewModel(private val dateValueList: List<DateValue>) {
             val current = (xs.first()..xs.last()).map {
                 val x = it.toFloat()
                 val y = lagrange.f(x)
-                println(y)
                 if (max < y) max = y
                 if (min > y) min = y
-                println("min: $min")
                 Point(x = x, y = y)
             }
-            println(max)
-            println(min)
             val offs = max - min
-            println(offs)
-            println(currentHeight)
             val li = current.map {
-                println(it)
-                println(it.y - min)
-                it.copy(y = ((it.y - min) / offs) * currentHeight + offsetY)
+                it.copy(y = currentHeight - ((it.y - min) / offs) * currentHeight + offsetY)
             }
-            println(li)
             state.value = GraphData(
                 list = li,
                 points = li.filter { xs.contains(it.x.roundToInt()) }.mapIndexed { i, offset ->
@@ -65,7 +56,7 @@ class GraphViewModel(private val dateValueList: List<DateValue>) {
                         x = offset.x,
                         y = offset.y
                     )
-                }.also { println(it) },
+                },
                 lines = separate(5, currentHeight).map { it.toFloat() + offsetY },
                 max = max,
                 min = min
@@ -74,9 +65,11 @@ class GraphViewModel(private val dateValueList: List<DateValue>) {
         return job!!
     }
 
+
     private fun separate(size: Int, length: Int): List<Int> {
         val step = length.toFloat() / (size - 1)
         return List(size) { (step * it).roundToInt() }
     }
+
 
 }

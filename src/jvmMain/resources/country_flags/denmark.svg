@@ -1,0 +1,11 @@
+<?xml version="1.0" standalone="yes"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="581">
+<path style="fill:#c9112f; stroke:none;" d="M0 0L0 249L249 249L249 0L0 0z"/>
+<path style="fill:#fbedef; stroke:none;" d="M249 0L249 249L250 249L250 74L250 23L249 0z"/>
+<path style="fill:#ffffff; stroke:none;" d="M250 0L250 249L0 249L0 332L250 332L250 581L332 581L332 332L768 332L768 249L332 249L332 0L250 0z"/>
+<path style="fill:#cf2945; stroke:none;" d="M332 0L332 249L333 249L333 73L333 23L332 0z"/>
+<path style="fill:#c9112f; stroke:none;" d="M333 0L333 249L768 249L768 0L333 0M0 332L0 581L249 581L249 332L0 332z"/>
+<path style="fill:#fbedef; stroke:none;" d="M249 332L249 581L250 581L250 405L250 355L249 332z"/>
+<path style="fill:#cf2945; stroke:none;" d="M332 332L332 581L333 581L333 405L333 355L332 332z"/>
+<path style="fill:#c9112f; stroke:none;" d="M333 332L333 581L768 581L768 332L333 332z"/>
+</svg>
