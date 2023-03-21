@@ -11,8 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -22,6 +20,7 @@ import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.gazim.app.exchange_rates.resource.Resources
 import com.gazim.app.exchange_rates.ui.components.GraphValueChanging
@@ -106,87 +105,104 @@ fun Item(
             append("")
         }
         val pxs = textMeasure.measure(empty, styleOne).size.height + textMeasure.measure(empty, styleTwo).size.height
-        with(localDensity) { pxs.toDp() + 40.dp }
+        with(localDensity) { pxs.toDp() + 8.dp }
     }
     val lineColor = MaterialTheme.colorScheme.primary
     val pointColor = MaterialTheme.colorScheme.secondary
     val markupLineColor = MaterialTheme.colorScheme.surfaceVariant
     val graphData by viewModel.state.collectAsState()
+    ElevatedCard {
+        Row {
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+            ) {
+                ItemFlag(valute.country, ValuteFlagAlternative.AspectRatio.FourToThree, heightFlag)
+                Spacer(Modifier.width(16.dp))
+                ItemText(Modifier.weight(1f), styleOne, styleTwo, valute)
+                Spacer(Modifier.width(16.dp))
+                GraphValueChanging(
+                    modifier = Modifier.fillMaxHeight().width(graphWidth)
+                        .background(
+                            MaterialTheme.colorScheme.surface,
+                            MaterialTheme.shapes.small
+                        ),
+                    lineColor = lineColor,
+                    markupLineColor = markupLineColor,
+                    dateStyle = dateStyle.copy(color = MaterialTheme.colorScheme.onSurface),
+                    graphData = graphData,
+                    textMeasurer = textMeasurer,
+                    valueStyle = dateStyle.copy(color = MaterialTheme.colorScheme.tertiary),
+                    pointColor = pointColor,
+                ) {
+                    viewModel.calculateGraph(
+                        width = it.width,
+                        height = it.height - textResultSize.height * 2 - 3,
+                        offsetY = textResultSize.height.toFloat() + 3
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ItemText(modifier: Modifier = Modifier, styleOne: TextStyle, styleTwo: TextStyle, valute: ValutePresentation) =
+    with(valute) {
+        Column(modifier) {
+            Row(Modifier.fillMaxWidth()) {
+                Text("$nominal $charCode", style = styleOne)
+                Spacer(Modifier.weight(1f))
+                Text(value, style = styleOne)
+            }
+            Spacer(Modifier.height(8.dp))
+            Row(Modifier.fillMaxWidth()) {
+                Text(name, style = styleTwo)
+                Spacer(Modifier.weight(1f))
+                Text(numCode, style = styleTwo)
+            }
+        }
+    }
+
+@Composable
+fun ItemFlag(valuteFlag: ValuteFlagAlternative?, aspectRatio: ValuteFlagAlternative.AspectRatio, heightFlag: Dp) {
+    val localDensity = LocalDensity.current
     var painter by remember { mutableStateOf<Painter?>(null) }
-    LaunchedEffect(valute.country) {
-        valute.country?.run {
-            Resources.getAndUseInputStream("${flagsResFolder}/${flagResName}") { inputStream ->
+    val width = remember {
+        heightFlag * when (aspectRatio) {
+            ValuteFlagAlternative.AspectRatio.FourToThree -> 4f / 3f
+            ValuteFlagAlternative.AspectRatio.OneToOne -> 1f
+            else -> 0f
+        }
+    }
+    LaunchedEffect(valuteFlag) {
+        valuteFlag?.run {
+            Resources.getAndUseInputStream(getPath(aspectRatio)) { inputStream ->
                 inputStream?.let { painter = loadSvgPainter(it, density = localDensity) }
             }
         }
     }
-    ElevatedCard {
-        with(valute) {
-            Row {
-                Box(
-                    Modifier.height(heightFlag).width(heightFlag * 2)
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
-                    contentAlignment = Alignment.Center
-                ) {
-                    painter?.let {
-                        Image(
-                            painter = it,
-                            contentDescription = "",
-                            modifier = Modifier.blur(16.dp).alpha(0.5f),
-                            contentScale = ContentScale.Crop
-                        )
-                        Image(
-                            painter = it,
-                            contentDescription = "",
-                            modifier = Modifier.background(Color.White)
-                        )
-                    }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Min)
-                ) {
-                    Column(Modifier.weight(1f)) {
-                        Row(Modifier.fillMaxWidth()) {
-                            Text("$nominal $charCode", style = styleOne)
-                            Spacer(Modifier.weight(1f))
-                            Text(value, style = styleOne)
-                        }
-                        Spacer(Modifier.height(8.dp))
-                        Row(Modifier.fillMaxWidth()) {
-                            Text(name, style = styleTwo)
-                            Spacer(Modifier.weight(1f))
-                            Text(numCode, style = styleTwo)
-                        }
-                    }
-                    Spacer(Modifier.width(16.dp))
-                    GraphValueChanging(
-                        modifier = Modifier.fillMaxHeight().width(graphWidth)
-                            .background(
-                                MaterialTheme.colorScheme.surface,
-                                MaterialTheme.shapes.small
-                            ),
-                        lineColor = lineColor,
-                        markupLineColor = markupLineColor,
-                        dateStyle = dateStyle.copy(color = MaterialTheme.colorScheme.onSurface),
-                        graphData = graphData,
-                        textMeasurer = textMeasurer,
-                        valueStyle = dateStyle.copy(color = MaterialTheme.colorScheme.tertiary),
-                        pointColor = pointColor,
-                    ) {
-                        viewModel.calculateGraph(
-                            width = it.width,
-                            height = it.height - textResultSize.height * 2 - 3,
-                            offsetY = textResultSize.height.toFloat() + 3
-                        )
-                    }
-                }
-            }
-
-
+    Box(
+        modifier = Modifier.height(heightFlag).width(width)
+//            .background(MaterialTheme.colorScheme.surfaceVariant)
+        ,
+        contentAlignment = Alignment.Center
+    ) {
+        painter?.let {
+//            Image(
+//                painter = it,
+//                contentDescription = "",
+//                modifier = Modifier.blur(16.dp).alpha(0.5f),
+//                contentScale = ContentScale.Crop
+//            )
+            Image(
+                painter = it,
+                contentDescription = "",
+                modifier = Modifier.background(Color.Red).fillMaxSize(),
+                contentScale = ContentScale.FillBounds
+            )
         }
     }
 }

@@ -42,7 +42,7 @@ class HomeViewModel {
                             date = c.date.run { "$dayOfMonth.$monthValue" }, value = c.valutes[index].value
                         )
                     }.reversed(),
-                    country = ValuteFlag.values().find { (it.valute == charCode).also(::println) }
+                    country = ValuteFlagAlternative.values().find { (it.valute == charCode).also(::println) }
                 )
             }
         }
