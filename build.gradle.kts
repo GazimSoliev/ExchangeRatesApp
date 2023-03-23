@@ -28,8 +28,8 @@ kotlin {
                 implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
                 implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
                 implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.2")
-                implementation("io.coil-kt:coil:2.2.2")
-                implementation("io.coil-kt:coil-compose:2.2.2")
+                implementation("ca.gosyer:compose-material-dialogs-datetime:0.9.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }
         }
         val jvmTest by getting

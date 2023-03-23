@@ -1,8 +1,8 @@
 package com.gazim.app.exchange_rates.ui.model
 
-import com.gazim.app.exchange_rates.ui.screen.home_screen.ValuteFlagAlternative
+import com.gazim.app.exchange_rates.ui.screen.home_screen.ExchangeFlagAlternative
 
-data class ValutePresentation(
+data class ExchangePresentation(
     val id: Int,
     val nominal: String,
     val value: String,
@@ -10,5 +10,5 @@ data class ValutePresentation(
     val name: String,
     val numCode: String,
     val changingLastFiveDay: List<DateValue>,
-    val country: ValuteFlagAlternative?
+    val country: ExchangeFlagAlternative?
 )

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-class ItemValuteViewModel(private val dateValueList: List<DateValue>) {
+class ItemExchangeViewModel(private val dateValueList: List<DateValue>) {
     private var width: Int = 0
     private var height: Int = 0
     private val viewModelScope = CoroutineScope(Dispatchers.Default)
@@ -28,8 +28,8 @@ class ItemValuteViewModel(private val dateValueList: List<DateValue>) {
             val ls = dateValueList.map(DateValue::value)
             val currentWidth = width.toInt()
             val currentHeight = height.toInt()
-            if (currentWidth == this@ItemValuteViewModel.width &&
-                currentHeight == this@ItemValuteViewModel.height
+            if (currentWidth == this@ItemExchangeViewModel.width &&
+                currentHeight == this@ItemExchangeViewModel.height
             ) return@launch
             val xs = separate(ls.size, currentWidth)
             val l = List(ls.size) { Point(x = xs[it].toFloat(), ls[it]) }
