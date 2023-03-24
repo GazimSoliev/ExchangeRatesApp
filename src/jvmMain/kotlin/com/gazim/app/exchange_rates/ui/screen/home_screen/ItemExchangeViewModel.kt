@@ -1,9 +1,10 @@
 package com.gazim.app.exchange_rates.ui.screen.home_screen
 
+import com.gazim.app.exchange_rates.math.LagrangePolynomial
 import com.gazim.app.exchange_rates.ui.model.DateValue
 import com.gazim.app.exchange_rates.ui.model.GraphData
 import com.gazim.app.exchange_rates.ui.model.GraphPoints
-import com.gazim.app.exchange_rates.ui.model.Point
+import com.gazim.app.exchange_rates.math.Point
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

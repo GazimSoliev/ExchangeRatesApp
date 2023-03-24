@@ -1,6 +1,6 @@
 package com.gazim.app.exchange_rates.ui.screen.home_screen
 
-enum class ExchangeFlagAlternative(val exchange: String, val flagResName: String) {
+enum class ExchangeFlag(val exchange: String, val flagResName: String) {
     Australia("AUD", "au.svg"),
     Azerbaijan("AZN", "az.svg"),
     UK("GBP", "gb.svg"),

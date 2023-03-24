@@ -5,6 +5,7 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -25,16 +26,16 @@ fun Calendar(dialogState: MaterialDialogState, initDate: LocalDate, onPositive: 
     )
     MaterialDialog(
         dialogState = dialogState,
-        properties = MaterialDialogProperties(size = DpSize(300.dp, 520.dp), title = "Calendar"),
+        properties = MaterialDialogProperties(size = DpSize(300.dp, 520.dp), title = "Календарь"),
         buttons = {
-            positiveButton(
-                "Ок", colors = textButtonColors
-            )
+            positiveButton("Ок", colors = textButtonColors)
             negativeButton("Отмена", colors = textButtonColors)
         }
     ) {
         datepicker(
             initialDate = initDate.toKotlinLocalDate(),
+            title = "Выберите дату",
+            locale = Locale("ru"),
             colors = DatePickerDefaults.colors(
                 headerBackgroundColor = MaterialTheme.colorScheme.primary,
                 headerTextColor = MaterialTheme.colorScheme.onPrimary,

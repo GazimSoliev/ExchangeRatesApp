@@ -1,11 +1,13 @@
 package com.gazim.app.exchange_rates.ui.screen.home_screen
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EditCalendar
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -24,11 +26,12 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.gazim.app.exchange_rates.resource.Resources
 import com.gazim.app.exchange_rates.ui.components.Calendar
 import com.gazim.app.exchange_rates.ui.components.GraphValueChanging
 import com.gazim.app.exchange_rates.ui.model.ExchangePresentation
+import com.gazim.app.exchange_rates.ui.model.HomeScreenState
+import com.gazim.app.exchange_rates.ui.model.NetworkResultStatus.*
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -37,74 +40,69 @@ import java.time.LocalDate
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
     remember { viewModel.getList(LocalDate.now()) }
-    val list by viewModel.list.collectAsState()
-    val date by viewModel.data.collectAsState()
-    HomeScreenComponent(date, list) {
+    val homeScreenState by viewModel.homeScreenState.collectAsState()
+    HomeScreenComponent(homeScreenState) {
         viewModel.getList(it)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreenComponent(
-    date: LocalDate,
-    exchanges: List<ExchangePresentation>,
+    homeScreenState: HomeScreenState,
     onDateChange: (LocalDate) -> Unit
 ) {
-    val dialogState = rememberMaterialDialogState()
-    Calendar(dialogState, date, onPositive = onDateChange)
     val localDensity = LocalDensity.current
-    var text by remember { mutableStateOf("") }
     var spacerHeight by remember { mutableStateOf(0.dp) }
-    Box {
-//        Row(
-//            modifier = Modifier.background(MaterialTheme.colorScheme.surface).fillMaxWidth().padding(8.dp),
-//            verticalAlignment = Alignment.CenterVertically,
-//        ) {
-//            Text(date)
-//            Spacer(modifier = Modifier.weight(1f))
-//            OutlinedTextField(text, { text = it })
-//            Spacer(modifier = Modifier.weight(1f))
-//        }
-
-        ExchangeList(exchanges, spacerHeight)
-        Column(Modifier.onGloballyPositioned {
+    Box(contentAlignment = Alignment.Center) {
+        when (homeScreenState.isLoaded) {
+            Loading -> CircularProgressIndicator()
+            Success -> ExchangeList(homeScreenState.exchanges, spacerHeight)
+            Failed -> Text(homeScreenState.errorMsg)
+        }
+        Column(Modifier.align(Alignment.TopCenter).onGloballyPositioned {
             with(localDensity) {
                 spacerHeight = it.size.height.toDp()
             }
         }) {
             Spacer(Modifier.height(16.dp))
-            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-//                Box(
-//                    modifier = Modifier.background(
-//                        MaterialTheme.colorScheme.secondaryContainer,
-//                        MaterialTheme.shapes.extraLarge
-//                    ).padding(8.dp).onClick {
-//                        dialogState.show()
-//                    }
-//                ) {
-//                    Text(date.toString(), color = MaterialTheme.colorScheme.onSecondaryContainer)
-//                }
-                val scope = rememberCoroutineScope()
-                FilledTonalButton(
-                    onClick = {
-                        scope.launch {
-                            delay(300)
-                            dialogState.show()
-                        }
-                    }
-                ) {
-                    Text(date.toString(), color = MaterialTheme.colorScheme.onSecondaryContainer)
-                }
-            }
+            CustomTopBar(Modifier, homeScreenState.date, homeScreenState.strDate, onDateChange, {})
         }
     }
 }
 
-@Preview
 @Composable
-fun ExchangeListPreview() {
-//    ValuteList(listOf(null, null, null))
+fun CustomTopBar(
+    modifier: Modifier,
+    date: LocalDate,
+    dateStr: String,
+    onNewDate: (LocalDate) -> Unit,
+    onRefresh: () -> Unit
+) {
+    val dialogState = rememberMaterialDialogState()
+    Calendar(dialogState, date, onPositive = onNewDate)
+    val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
+    val scope = rememberCoroutineScope()
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        FilledTonalButton(onClick = {
+            scope.launch {
+                delay(300)
+                dialogState.show()
+            }
+        }, contentPadding = PaddingValues(horizontal = 16.dp)) {
+            Icon(Icons.Default.EditCalendar, "Choose a date", tint = onSurfaceVariant)
+            Spacer(Modifier.padding(4.dp))
+            Text(dateStr, color = onSurfaceVariant)
+        }
+        FilledTonalIconButton(onClick = {
+
+        }) {
+            Icon(Icons.Default.Refresh, "Refresh list", tint = onSurfaceVariant)
+        }
+    }
 }
 
 @OptIn(ExperimentalTextApi::class)
@@ -229,7 +227,7 @@ fun ItemText(modifier: Modifier = Modifier, styleOne: TextStyle, styleTwo: TextS
     }
 
 @Composable
-fun ItemFlag(exchangeFlag: ExchangeFlagAlternative?, aspectRatio: AspectRatio, heightFlag: Dp) {
+fun ItemFlag(exchangeFlag: ExchangeFlag?, aspectRatio: AspectRatio, heightFlag: Dp) {
     val localDensity = LocalDensity.current
     var painter by remember { mutableStateOf<Painter?>(null) }
     val width = remember {

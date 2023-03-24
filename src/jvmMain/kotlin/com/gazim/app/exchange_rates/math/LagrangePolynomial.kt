@@ -1,6 +1,4 @@
-package com.gazim.app.exchange_rates.ui.screen.home_screen
-
-import com.gazim.app.exchange_rates.ui.model.Point
+package com.gazim.app.exchange_rates.math
 
 
 @Suppress("MemberVisibilityCanBePrivate")

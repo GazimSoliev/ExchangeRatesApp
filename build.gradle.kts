@@ -25,6 +25,7 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
                 implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
                 implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
                 implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.2")
