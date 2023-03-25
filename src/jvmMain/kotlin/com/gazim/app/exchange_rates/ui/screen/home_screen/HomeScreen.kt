@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import com.gazim.app.exchange_rates.resource.Resources
 import com.gazim.app.exchange_rates.ui.components.Calendar
 import com.gazim.app.exchange_rates.ui.components.GraphValueChanging
+import com.gazim.app.exchange_rates.ui.model.AspectRatio
+import com.gazim.app.exchange_rates.ui.model.ExchangeFlag
 import com.gazim.app.exchange_rates.ui.model.ExchangePresentation
 import com.gazim.app.exchange_rates.ui.model.HomeScreenState
 import com.gazim.app.exchange_rates.ui.model.NetworkResultStatus.*

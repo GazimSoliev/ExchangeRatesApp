@@ -1,9 +1,6 @@
 package com.gazim.app.exchange_rates.ui.screen.home_screen
 
-import com.gazim.app.exchange_rates.ui.model.DateValue
-import com.gazim.app.exchange_rates.ui.model.ExchangePresentation
-import com.gazim.app.exchange_rates.ui.model.HomeScreenState
-import com.gazim.app.exchange_rates.ui.model.NetworkResultStatus
+import com.gazim.app.exchange_rates.ui.model.*
 import com.gazim.library.exchange_rates.model.ExchangeRatesDataProperty
 import com.gazim.library.exchange_rates.model.IVarCus
 import com.gazim.library.exchange_rates.repository.ExchangeRatesRepository

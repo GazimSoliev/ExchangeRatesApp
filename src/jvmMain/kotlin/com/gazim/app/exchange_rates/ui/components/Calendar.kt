@@ -30,7 +30,8 @@ fun Calendar(dialogState: MaterialDialogState, initDate: LocalDate, onPositive: 
         buttons = {
             positiveButton("Ок", colors = textButtonColors)
             negativeButton("Отмена", colors = textButtonColors)
-        }
+        },
+        backgroundColor = MaterialTheme.colorScheme.background
     ) {
         datepicker(
             initialDate = initDate.toKotlinLocalDate(),

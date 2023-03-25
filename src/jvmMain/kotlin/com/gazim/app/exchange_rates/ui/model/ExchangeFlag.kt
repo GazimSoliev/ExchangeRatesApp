@@ -1,4 +1,4 @@
-package com.gazim.app.exchange_rates.ui.screen.home_screen
+package com.gazim.app.exchange_rates.ui.model
 
 enum class ExchangeFlag(val exchange: String, val flagResName: String) {
     Australia("AUD", "au.svg"),
@@ -47,7 +47,19 @@ enum class ExchangeFlag(val exchange: String, val flagResName: String) {
     Japan("JPY", "jp.svg"),
     Iceland("ISK", "is.svg"),
     Latvia("LVL", "lv.svg"),
-    Lithuania("LTL", "lt.svg");
+    Lithuania("LTL", "lt.svg"),
+    Austria("ATS", "at.svg"),
+    Belgium("BEF", "be.svg"),
+    Greece("GRD", "gr.svg"),
+    Ireland("IEP", "ie.svg"),
+    Spain("ESP", "es.svg"),
+    Italy("ITL", "it.svg"),
+    Germany("DEM", "de.svg"),
+    Netherlands("NLG", "nl.svg"),
+    Portugal("PTE", "pt.svg"),
+    OldTurkey("TRL", "tr.svg"),
+    Finland("FIM", "fi.svg"),
+    France("FRF", "fr.svg");
 
     val flagsResFolder = "flags"
     fun getPath(aspectRatio: AspectRatio) = "$flagsResFolder/${aspectRatio.ratio}/$flagResName"
