@@ -30,7 +30,7 @@ fun Calendar(
     )
     MaterialDialog(
         dialogState = dialogState,
-        properties = MaterialDialogProperties(size = DpSize(300.dp, 520.dp), title = "Календарь"),
+        properties = MaterialDialogProperties(size = DpSize(300.dp, 550.dp), title = "Календарь"),
         buttons = {
             positiveButton("Ок", colors = textButtonColors)
             negativeButton("Отмена", colors = textButtonColors)

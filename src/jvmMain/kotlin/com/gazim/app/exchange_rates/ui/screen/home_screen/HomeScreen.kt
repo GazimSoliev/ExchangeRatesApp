@@ -214,7 +214,7 @@ fun Item(
     val textMeasure = rememberTextMeasurer()
     val textResultSize = remember {
         textMeasure.measure(buildAnnotatedString {
-            append("###.#### ")
+            append("##########")
         }, dateStyle).size
     }
     val graphTextWidth = remember {
@@ -296,10 +296,7 @@ fun ItemFlag(exchangeFlag: ExchangeFlag?, aspectRatio: AspectRatio, heightFlag: 
     val localDensity = LocalDensity.current
     var painter by remember { mutableStateOf<Painter?>(null) }
     val width = remember {
-        heightFlag * when (aspectRatio) {
-            AspectRatio.FourToThree -> 4f / 3f
-            AspectRatio.OneToOne -> 1f
-        }
+        heightFlag * aspectRatio.widthOnHeight()
     }
     LaunchedEffect(exchangeFlag) {
         exchangeFlag?.run {

@@ -74,8 +74,6 @@ class HomeViewModel {
                             )
                         )
                     )
-                        .also { println("Check: $it") }
-                println(varCus)
                 if (lastFiveDay.add(varCus)) i++
                 count++
             }
@@ -93,11 +91,11 @@ class HomeViewModel {
                             (if (index < size) c.exchanges.find { it.charCode == charCode }?.value else null)?.let {
                                 DateValue(
                                     date = c.date.shortFormat(),
-                                    value = it.also { println(it) }
+                                    value = it
                                 )
                             }
                         }.reversed(),
-                        country = ExchangeFlag.values().find { it.exchange == charCode }
+                        country = ExchangeFlag.values().find { it.exchanges.contains(charCode) }
                     )
                 }
             }
@@ -117,7 +115,6 @@ class HomeViewModel {
             homeScreenState.value = homeScreenState.value.copy(
                 isLoaded = NetworkResultStatus.Failed
             )
-            println(it)
         }
     }
 
