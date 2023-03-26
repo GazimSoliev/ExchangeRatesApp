@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.LinkedHashSet
 
 class HomeViewModel {
     private val viewModelScope = CoroutineScope(Job())
@@ -50,7 +52,7 @@ class HomeViewModel {
     }
 
     private fun LocalDate.format(): String = format(DateTimeFormatter.ofPattern("dd.LL.YYYY"))
-    private fun LocalDate.shortFormat(): String = format(DateTimeFormatter.ofPattern("dd.LL"))
+    private fun LocalDate.shortFormat(): String = format(DateTimeFormatter.ofPattern("MMM, YY", Locale("ru")))
 
     fun update() = viewModelScope.launch(Dispatchers.IO) {
         runCatching {
@@ -61,9 +63,10 @@ class HomeViewModel {
             val lastFiveDay = LinkedHashSet<IVarCus>()
             var i = 0
             var count = 0
-            while (i < 5 && count < 16) {
+            while (i < 6 && count < 16) {
                 val varCus =
-                    ExchangeRatesRepository.getExchangeRates(ExchangeRatesDataProperty(localDate.minusDays(count.toLong())))
+                    ExchangeRatesRepository.getExchangeRates(ExchangeRatesDataProperty(localDate.minusMonths(count.times(2).toLong())))
+                        .also { println("Check: $it") }
                 println(varCus)
                 if (lastFiveDay.add(varCus)) i++
                 count++
@@ -77,11 +80,14 @@ class HomeViewModel {
                         charCode = charCode,
                         name = name,
                         numCode = numCode,
-                        changingLastFiveDay = lastFiveDay.map { c ->
-                            DateValue(
-                                date = c.date.shortFormat(),
-                                value = c.exchanges[index].value
-                            )
+                        changingLastFiveDay = lastFiveDay.mapNotNull { c ->
+                            val size = c.exchanges.size
+                            (if (index < size) c.exchanges.find { it.charCode == charCode }?.value else null)?.let {
+                                DateValue(
+                                    date = c.date.shortFormat(),
+                                    value = it.also { println(it) }
+                                )
+                            }
                         }.reversed(),
                         country = ExchangeFlag.values().find { it.exchange == charCode }
                     )
@@ -103,6 +109,7 @@ class HomeViewModel {
             homeScreenState.value = homeScreenState.value.copy(
                 isLoaded = NetworkResultStatus.Failed
             )
+            println(it)
         }
     }
 

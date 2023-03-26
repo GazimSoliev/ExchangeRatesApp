@@ -22,10 +22,12 @@ class ItemExchangeViewModel(private val dateValueList: List<DateValue>) {
             list = emptyList(), points = emptyList(), lines = emptyList(), max = 0f, min = 0f
         )
     )
+    private var canCalculate = dateValueList.size > 1
 
-    fun calculateGraph(width: Float, height: Float, offsetY: Float, offsetX: Float = 30f): Job {
+    fun calculateGraph(width: Float, height: Float, offsetY: Float): Job {
         job?.cancel()
         job = viewModelScope.launch(Dispatchers.Default) {
+            if (!canCalculate) return@launch
             val ls = dateValueList.map(DateValue::value)
             val currentWidth = width.toInt()
             val currentHeight = height.toInt()

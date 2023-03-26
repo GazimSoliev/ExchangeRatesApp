@@ -131,12 +131,15 @@ fun CustomTopBar(
                 Icon(Icons.Default.Search, "Search")
             }
             BasicTextField(
-                modifier = Modifier.focusRequester(focusRequester),
+                modifier = Modifier.focusRequester(focusRequester).width(128.dp),
                 value = TextFieldValue(text, selection),
                 onValueChange = { selection = it.selection; onTextChange(it.text) },
                 textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onSecondaryContainer),
-                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                maxLines = 1,
+                singleLine = true
             )
+            Spacer(Modifier.width(16.dp))
         }
         CustomTopBarItem {
             IconButton(onClick = {
@@ -167,7 +170,7 @@ fun ExchangeList(exchanges: List<ExchangePresentation>, spacerHeight: Dp) {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(16.dp),
-            state = scrollState
+            state = scrollState,
         ) {
             item {
                 Spacer(Modifier.height(spacerHeight))
@@ -182,7 +185,15 @@ fun ExchangeList(exchanges: List<ExchangePresentation>, spacerHeight: Dp) {
         }
         VerticalScrollbar(
             scrollAdapter,
-            Modifier.align(Alignment.CenterEnd).fillMaxHeight().padding(3.25.dp)
+            Modifier.align(Alignment.CenterEnd).fillMaxHeight().padding(end = 2.dp, top = spacerHeight),
+            style = ScrollbarStyle(
+                minimalHeight = 32.dp,
+                thickness = 8.dp,
+                shape = MaterialTheme.shapes.extraSmall,
+                hoverDurationMillis = 500,
+                unhoverColor = MaterialTheme.colorScheme.surfaceTint.copy(alpha = 0.3f),
+                hoverColor = MaterialTheme.colorScheme.surfaceTint
+            )
         )
     }
 
@@ -212,7 +223,7 @@ fun Item(
             textResultSize.width.toDp()
         }
     }
-    val graphWidth = remember { graphTextWidth * 5 }
+    val graphWidth = remember { graphTextWidth * 6 }
     val heightFlag = remember {
         val empty = buildAnnotatedString {
             append("")
@@ -268,13 +279,15 @@ fun ItemText(modifier: Modifier = Modifier, styleOne: TextStyle, styleTwo: TextS
             Row(Modifier.fillMaxWidth()) {
                 Text("$nominal $charCode", style = styleOne)
                 Spacer(Modifier.weight(1f))
-                Text(value, style = styleOne)
+                Spacer(Modifier.width(16.dp))
+                Text(value, style = styleOne, maxLines = 1)
             }
             Spacer(Modifier.height(8.dp))
             Row(Modifier.fillMaxWidth()) {
                 Text(name, style = styleTwo)
                 Spacer(Modifier.weight(1f))
-                Text(numCode, style = styleTwo)
+                Spacer(Modifier.width(16.dp))
+                Text(numCode, style = styleTwo, maxLines = 1)
             }
         }
     }
