@@ -65,7 +65,15 @@ class HomeViewModel {
             var count = 0
             while (i < 6 && count < 16) {
                 val varCus =
-                    ExchangeRatesRepository.getExchangeRates(ExchangeRatesDataProperty(localDate.minusMonths(count.times(2).toLong())))
+                    ExchangeRatesRepository.getExchangeRates(
+                        ExchangeRatesDataProperty(
+                            localDate.minusMonths(
+                                count.times(
+                                    2
+                                ).toLong()
+                            )
+                        )
+                    )
                         .also { println("Check: $it") }
                 println(varCus)
                 if (lastFiveDay.add(varCus)) i++
@@ -113,15 +121,14 @@ class HomeViewModel {
         }
     }
 
-    private fun filter(query: String): List<ExchangePresentation> {
-        return clearList.filter {
-            query.isBlank() ||
-                    it.value.contains(query, true) ||
-                    it.charCode.contains(query, true) ||
-                    it.name.contains(query, true) ||
-                    it.nominal.contains(query, true) ||
-                    it.country?.name?.contains(query, true) ?: false
-        }
+    private fun filter(query: String) = clearList.filter {
+        query.isBlank() ||
+                it.value.contains(query, true) ||
+                it.charCode.contains(query, true) ||
+                it.name.contains(query, true) ||
+                it.nominal.contains(query) ||
+                it.numCode.contains(query) ||
+                it.country?.name?.contains(query, true) ?: false
     }
 
 }
