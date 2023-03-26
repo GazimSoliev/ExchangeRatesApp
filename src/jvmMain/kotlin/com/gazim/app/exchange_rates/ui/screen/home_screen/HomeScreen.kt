@@ -74,12 +74,11 @@ fun HomeScreenComponent(
             Success -> ExchangeList(homeScreenState.exchanges, spacerHeight)
             Failed -> Text(homeScreenState.errorMsg)
         }
-        Column(Modifier.align(Alignment.TopCenter).onGloballyPositioned {
+        Box(Modifier.align(Alignment.TopCenter).onGloballyPositioned {
             with(localDensity) {
                 spacerHeight = it.size.height.toDp()
             }
         }) {
-            Spacer(Modifier.height(16.dp))
             CustomTopBar(
                 Modifier,
                 homeScreenState.date,
@@ -122,7 +121,7 @@ fun CustomTopBar(
     var selection by remember { mutableStateOf(TextRange.Zero) }
     val focusRequester = remember { FocusRequester() }
     Row(
-        modifier = modifier.height(IntrinsicSize.Min),
+        modifier = modifier.height(IntrinsicSize.Min).padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -173,7 +172,7 @@ fun ExchangeList(exchanges: List<ExchangePresentation>, spacerHeight: Dp) {
             state = scrollState,
         ) {
             item {
-                Spacer(Modifier.height(spacerHeight))
+                Spacer(Modifier.height(spacerHeight - 8.dp))
             }
             items(exchanges) {
                 Item(

@@ -108,7 +108,7 @@ import com.gazim.app.exchange_rates.ui.theme.AppTheme
 
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
+    Window(onCloseRequest = ::exitApplication, title = "Курс валют") {
         ExchangeRatesApp()
     }
 }
