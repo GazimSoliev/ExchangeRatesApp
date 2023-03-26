@@ -18,7 +18,11 @@ import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
 
 @Composable
-fun Calendar(dialogState: MaterialDialogState, initDate: LocalDate, onPositive: (LocalDate) -> Unit) {
+fun Calendar(
+    dialogState: MaterialDialogState,
+    initDate: LocalDate,
+     onPositive: (LocalDate) -> Unit
+) {
     val textButtonColors = ButtonDefaults.textButtonColors(
         backgroundColor = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.primary,

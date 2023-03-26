@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -15,6 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -24,6 +29,7 @@ import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.gazim.app.exchange_rates.resource.Resources
@@ -43,15 +49,22 @@ import java.time.LocalDate
 fun HomeScreen(viewModel: HomeViewModel) {
     remember { viewModel.getList(LocalDate.now()) }
     val homeScreenState by viewModel.homeScreenState.collectAsState()
-    HomeScreenComponent(homeScreenState) {
-        viewModel.getList(it)
-    }
+    HomeScreenComponent(
+        homeScreenState,
+        viewModel::getList,
+        viewModel::update,
+        homeScreenState.searchQuery,
+        viewModel::setQuery
+    )
 }
 
 @Composable
 fun HomeScreenComponent(
     homeScreenState: HomeScreenState,
-    onDateChange: (LocalDate) -> Unit
+    onDateChange: (LocalDate) -> Unit,
+    onRefresh: () -> Unit,
+    text: String,
+    onTextChange: (String) -> Unit
 ) {
     val localDensity = LocalDensity.current
     var spacerHeight by remember { mutableStateOf(0.dp) }
@@ -67,9 +80,29 @@ fun HomeScreenComponent(
             }
         }) {
             Spacer(Modifier.height(16.dp))
-            CustomTopBar(Modifier, homeScreenState.date, homeScreenState.strDate, onDateChange, {})
+            CustomTopBar(
+                Modifier,
+                homeScreenState.date,
+                homeScreenState.strDate,
+                onDateChange,
+                onRefresh,
+                text,
+                onTextChange
+            )
         }
     }
+}
+
+@Composable
+fun CustomTopBarItem(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.fillMaxHeight().background(
+            MaterialTheme.colorScheme.secondaryContainer,
+            MaterialTheme.shapes.extraLarge
+        ),
+        content = content
+    )
 }
 
 @Composable
@@ -78,31 +111,49 @@ fun CustomTopBar(
     date: LocalDate,
     dateStr: String,
     onNewDate: (LocalDate) -> Unit,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    text: String,
+    onTextChange: (String) -> Unit
 ) {
     val dialogState = rememberMaterialDialogState()
     Calendar(dialogState, date, onPositive = onNewDate)
-    val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
+    val onSurfaceVariant = MaterialTheme.colorScheme.onSecondaryContainer
     val scope = rememberCoroutineScope()
+    var selection by remember { mutableStateOf(TextRange.Zero) }
+    val focusRequester = remember { FocusRequester() }
     Row(
-        modifier = modifier,
+        modifier = modifier.height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        FilledTonalButton(onClick = {
-            scope.launch {
-                delay(300)
-                dialogState.show()
+        CustomTopBarItem {
+            Box(Modifier.aspectRatio(1f).fillMaxHeight().padding(4.dp), contentAlignment = Alignment.Center) {
+                Icon(Icons.Default.Search, "Search")
             }
-        }, contentPadding = PaddingValues(horizontal = 16.dp)) {
-            Icon(Icons.Default.EditCalendar, "Choose a date", tint = onSurfaceVariant)
-            Spacer(Modifier.padding(4.dp))
-            Text(dateStr, color = onSurfaceVariant)
+            BasicTextField(
+                modifier = Modifier.focusRequester(focusRequester),
+                value = TextFieldValue(text, selection),
+                onValueChange = { selection = it.selection; onTextChange(it.text) },
+                textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onSecondaryContainer),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
+            )
         }
-        FilledTonalIconButton(onClick = {
-
-        }) {
-            Icon(Icons.Default.Refresh, "Refresh list", tint = onSurfaceVariant)
+        CustomTopBarItem {
+            IconButton(onClick = {
+                scope.launch {
+                    delay(300)
+                    dialogState.show()
+                }
+            }) {
+                Icon(Icons.Default.EditCalendar, "Choose a date")
+            }
+            Text(dateStr, color = onSurfaceVariant)
+            Spacer(Modifier.padding(8.dp))
+        }
+        CustomTopBarItem {
+            FilledTonalIconButton(onClick = { onRefresh() }) {
+                Icon(Icons.Default.Refresh, "Refresh list", tint = onSurfaceVariant)
+            }
         }
     }
 }
@@ -236,7 +287,6 @@ fun ItemFlag(exchangeFlag: ExchangeFlag?, aspectRatio: AspectRatio, heightFlag: 
         heightFlag * when (aspectRatio) {
             AspectRatio.FourToThree -> 4f / 3f
             AspectRatio.OneToOne -> 1f
-            else -> 0f
         }
     }
     LaunchedEffect(exchangeFlag) {

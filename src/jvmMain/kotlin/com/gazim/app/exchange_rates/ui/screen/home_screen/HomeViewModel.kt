@@ -10,9 +10,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class HomeViewModel {
-    private val viewModelScope = CoroutineScope(Job() + Dispatchers.IO)
+    private val viewModelScope = CoroutineScope(Job())
+    private var clearList = emptyList<ExchangePresentation>()
     val homeScreenState = MutableStateFlow(
         HomeScreenState(
             date = LocalDate.now(),
@@ -20,22 +22,45 @@ class HomeViewModel {
             nameVarCus = "",
             isLoaded = NetworkResultStatus.Loading,
             exchanges = emptyList(),
+            searchQuery = ""
         )
     )
+    private var _homeScreenState
+        get() = homeScreenState.value
+        set(value) {
+            homeScreenState.value = value
+        }
+
+    fun setQuery(query: String) = viewModelScope.launch {
+        _homeScreenState = _homeScreenState.copy(
+            searchQuery = query,
+            exchanges = filter(query)
+        )
+    }
 
     fun getList(localDate: LocalDate) = viewModelScope.launch(Dispatchers.IO) {
+        if (
+            homeScreenState.value.date == localDate && clearList.isNotEmpty()
+        ) return@launch
+        homeScreenState.value = homeScreenState.value.copy(
+            date = localDate,
+            strDate = localDate.format()
+        )
+        update()
+    }
+
+    private fun LocalDate.format(): String = format(DateTimeFormatter.ofPattern("dd.LL.YYYY"))
+    private fun LocalDate.shortFormat(): String = format(DateTimeFormatter.ofPattern("dd.LL"))
+
+    fun update() = viewModelScope.launch(Dispatchers.IO) {
         runCatching {
-            println("Test")
-            if (homeScreenState.value.date == localDate && homeScreenState.value.exchanges.isNotEmpty()) return@runCatching
             homeScreenState.value = homeScreenState.value.copy(
-                isLoaded = NetworkResultStatus.Loading,
-                date = localDate,
-                strDate = localDate.toString()
+                isLoaded = NetworkResultStatus.Loading
             )
+            val localDate = homeScreenState.value.date
             val lastFiveDay = LinkedHashSet<IVarCus>()
             var i = 0
             var count = 0
-            println("Start")
             while (i < 5 && count < 16) {
                 val varCus =
                     ExchangeRatesRepository.getExchangeRates(ExchangeRatesDataProperty(localDate.minusDays(count.toLong())))
@@ -54,7 +79,7 @@ class HomeViewModel {
                         numCode = numCode,
                         changingLastFiveDay = lastFiveDay.map { c ->
                             DateValue(
-                                date = c.date.run { "${numFormat(dayOfMonth)}.${numFormat(monthValue)}" },
+                                date = c.date.shortFormat(),
                                 value = c.exchanges[index].value
                             )
                         }.reversed(),
@@ -62,13 +87,16 @@ class HomeViewModel {
                     )
                 }
             }
+            clearList = list
+            val query = homeScreenState.value.searchQuery
             homeScreenState.value = varCus.run {
                 HomeScreenState(
                     date = date,
-                    strDate = date.toString(),
+                    strDate = date.format(),
                     nameVarCus = name,
-                    exchanges = list,
+                    exchanges = filter(query),
                     isLoaded = NetworkResultStatus.Success,
+                    searchQuery = query
                 )
             }
         }.onFailure {
@@ -78,12 +106,15 @@ class HomeViewModel {
         }
     }
 
-    fun numFormat(num: Int): String {
-        val numStr = num.toString()
-        return when (numStr.length) {
-            1 -> "0$numStr"
-            2 -> numStr
-            else -> numStr.substring(numStr.length - 2)
+    private fun filter(query: String): List<ExchangePresentation> {
+        return clearList.filter {
+            query.isBlank() ||
+                    it.value.contains(query, true) ||
+                    it.charCode.contains(query, true) ||
+                    it.name.contains(query, true) ||
+                    it.nominal.contains(query, true) ||
+                    it.country?.name?.contains(query, true) ?: false
         }
     }
+
 }

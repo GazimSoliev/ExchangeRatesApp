@@ -7,7 +7,8 @@ data class HomeScreenState(
     val strDate: String,
     val nameVarCus: String,
     val isLoaded: NetworkResultStatus,
-    val errorMsg: String = "No internet",
-    val exchanges: List<ExchangePresentation>
+    val errorMsg: String = "Произошла ошибка, нету доступа к интернету, либо не досутпны данные",
+    val exchanges: List<ExchangePresentation>,
+    val searchQuery: String
 )
 
