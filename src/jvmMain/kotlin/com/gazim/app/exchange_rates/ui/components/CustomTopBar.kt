@@ -18,6 +18,8 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
@@ -44,10 +46,16 @@ fun CustomTopBar(
     showBlur: (Boolean) -> Unit
 ) {
     val dialogState = rememberMaterialDialogState()
-    Calendar(dialogState, date, onPositive = onNewDate) { showBlur(false) }
     val onSurfaceVariant = MaterialTheme.colorScheme.onSecondaryContainer
     var selection by remember { mutableStateOf(TextRange.Zero) }
     val focusRequester = remember { FocusRequester() }
+    val coroutineScope = rememberCoroutineScope()
+    Calendar(dialogState, date, onPositive = onNewDate) {
+        coroutineScope.launch {
+            delay(300)
+            showBlur(false)
+        }
+    }
     Row(
         modifier = modifier.height(IntrinsicSize.Min).padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -66,17 +74,21 @@ fun CustomTopBar(
                 maxLines = 1,
                 singleLine = true
             )
-            Spacer(androidx.compose.ui.Modifier.width(16.dp))
+            Spacer(Modifier.width(16.dp))
         }
         CustomTopBarItem {
             IconButton(onClick = {
-                showBlur(true)
-                dialogState.show()
+                coroutineScope.launch {
+                    showBlur(true)
+                    delay(300)
+                    dialogState.show()
+                }
+
             }) {
                 Icon(Icons.Default.EditCalendar, "Choose a date")
             }
             Text(dateStr, color = onSurfaceVariant)
-            Spacer(androidx.compose.ui.Modifier.padding(8.dp))
+            Spacer(Modifier.padding(8.dp))
         }
         CustomTopBarItem {
             FilledTonalIconButton(onClick = { onRefresh() }) {
