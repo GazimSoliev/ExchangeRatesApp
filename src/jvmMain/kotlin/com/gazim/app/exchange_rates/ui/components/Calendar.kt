@@ -21,7 +21,8 @@ import java.time.LocalDate
 fun Calendar(
     dialogState: MaterialDialogState,
     initDate: LocalDate,
-     onPositive: (LocalDate) -> Unit
+    onPositive: (LocalDate) -> Unit,
+    onDialogClose: () -> Unit
 ) {
     val textButtonColors = ButtonDefaults.textButtonColors(
         backgroundColor = Color.Transparent,
@@ -32,10 +33,11 @@ fun Calendar(
         dialogState = dialogState,
         properties = MaterialDialogProperties(size = DpSize(300.dp, 550.dp), title = "Календарь"),
         buttons = {
-            positiveButton("Ок", colors = textButtonColors)
-            negativeButton("Отмена", colors = textButtonColors)
+            positiveButton("Ок", colors = textButtonColors, onClick = onDialogClose)
+            negativeButton("Отмена", colors = textButtonColors, onClick = onDialogClose)
         },
-        backgroundColor = MaterialTheme.colorScheme.background
+        backgroundColor = MaterialTheme.colorScheme.background,
+        onCloseRequest = { it.hide(); onDialogClose() }
     ) {
         datepicker(
             initialDate = initDate.toKotlinLocalDate(),
