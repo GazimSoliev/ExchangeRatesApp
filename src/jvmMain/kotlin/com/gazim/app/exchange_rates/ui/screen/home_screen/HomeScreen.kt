@@ -1,6 +1,8 @@
 package com.gazim.app.exchange_rates.ui.screen.home_screen
 
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -38,7 +40,10 @@ fun HomeScreenComponent(
     onTextChange: (String) -> Unit
 ) {
     var calendarIsOpened by remember { mutableStateOf(false) }
-    val blurDp by animateDpAsState(if (calendarIsOpened) 16.dp else 0.dp)
+    val blurDp by animateDpAsState(
+        if (calendarIsOpened) 16.dp else 0.dp,
+        animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
+    )
     val localDensity = LocalDensity.current
     var spacerHeight by remember { mutableStateOf(0.dp) }
     Box(contentAlignment = Alignment.Center, modifier = Modifier.blur(blurDp)) {
