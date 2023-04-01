@@ -1,8 +1,10 @@
 package com.gazim.app.exchange_rates.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.onClick
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,20 +26,22 @@ import androidx.compose.ui.unit.dp
 import com.gazim.app.exchange_rates.resource.Resources
 import com.gazim.app.exchange_rates.ui.model.AspectRatio
 import com.gazim.app.exchange_rates.ui.model.ExchangeFlag
-import com.gazim.app.exchange_rates.ui.model.ExchangePresentation
+import com.gazim.app.exchange_rates.ui.model.ExchangeItemState
 import com.gazim.app.exchange_rates.ui.screen.home_screen.ItemExchangeViewModel
+import com.gazim.library.exchange_rates.model.IExchange
 
-@OptIn(ExperimentalTextApi::class)
+@OptIn(ExperimentalTextApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun ExchangeItem(
-    exchange: ExchangePresentation,
+    exchange: ExchangeItemState,
     styleOne: TextStyle = MaterialTheme.typography.headlineLarge.copy(
         fontStyle = FontStyle.Italic, fontFamily = FontFamily.Serif
     ),
     styleTwo: TextStyle = MaterialTheme.typography.headlineSmall,
     viewModel: ItemExchangeViewModel = rememberSaveable(exchange) { ItemExchangeViewModel(exchange.changingLastFiveDay) },
     textMeasurer: TextMeasurer = rememberTextMeasurer(),
-    dateStyle: TextStyle = MaterialTheme.typography.labelSmall
+    dateStyle: TextStyle = MaterialTheme.typography.labelSmall,
+    onItemClick: (IExchange) -> Unit
 ) {
     val localDensity = LocalDensity.current
     val textMeasure = rememberTextMeasurer()
@@ -63,7 +67,7 @@ fun ExchangeItem(
     val pointColor = MaterialTheme.colorScheme.secondary
     val markupLineColor = MaterialTheme.colorScheme.surfaceVariant
     val graphData by viewModel.state.collectAsState()
-    ElevatedCard {
+    ElevatedCard(Modifier.onClick { onItemClick(exchange.exchange) }) {
         Row {
             Row(
                 modifier = Modifier
@@ -101,7 +105,7 @@ fun ExchangeItem(
 }
 
 @Composable
-fun ItemText(modifier: Modifier = Modifier, styleOne: TextStyle, styleTwo: TextStyle, exchange: ExchangePresentation) =
+fun ItemText(modifier: Modifier = Modifier, styleOne: TextStyle, styleTwo: TextStyle, exchange: ExchangeItemState) =
     with(exchange) {
         Column(modifier) {
             Row(Modifier.fillMaxWidth()) {

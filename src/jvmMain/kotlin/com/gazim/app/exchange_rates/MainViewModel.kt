@@ -1,4 +1,4 @@
-package com.gazim.app.exchange_rates.ui
+package com.gazim.app.exchange_rates
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

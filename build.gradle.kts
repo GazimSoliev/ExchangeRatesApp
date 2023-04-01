@@ -31,6 +31,7 @@ kotlin {
                 implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.2")
                 implementation("ca.gosyer:compose-material-dialogs-datetime:0.9.2")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+                implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc04")
             }
         }
         val jvmTest by getting

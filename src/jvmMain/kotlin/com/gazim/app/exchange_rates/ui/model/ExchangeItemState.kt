@@ -1,6 +1,9 @@
 package com.gazim.app.exchange_rates.ui.model
 
-data class ExchangePresentation(
+import com.gazim.library.exchange_rates.model.IExchange
+
+data class ExchangeItemState(
+    val exchange: IExchange,
     val id: Int,
     val nominal: String,
     val value: String,

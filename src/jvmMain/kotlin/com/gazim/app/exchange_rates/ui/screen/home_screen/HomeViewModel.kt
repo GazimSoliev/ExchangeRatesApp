@@ -1,9 +1,9 @@
 package com.gazim.app.exchange_rates.ui.screen.home_screen
 
 import com.gazim.app.exchange_rates.ui.model.*
-import com.gazim.library.exchange_rates.model.ExchangeRatesDataProperty
 import com.gazim.library.exchange_rates.model.IVarCus
-import com.gazim.library.exchange_rates.repository.ExchangeRatesRepository
+import com.gazim.library.exchange_rates.model.exchange_er_property_models_impl.DateExcERProp
+import com.gazim.library.exchange_rates.repository.ExchangeRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -12,11 +12,10 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.LinkedHashSet
 
 class HomeViewModel {
     private val viewModelScope = CoroutineScope(Job())
-    private var clearList = emptyList<ExchangePresentation>()
+    private var clearList = emptyList<ExchangeItemState>()
     val homeScreenState = MutableStateFlow(
         HomeScreenState(
             date = LocalDate.now(),
@@ -52,7 +51,7 @@ class HomeViewModel {
     }
 
     private fun LocalDate.format(): String = format(DateTimeFormatter.ofPattern("dd.LL.YYYY"))
-    private fun LocalDate.shortFormat(): String = format(DateTimeFormatter.ofPattern("MMM, YY", Locale("ru")))
+    private fun LocalDate.shortFormat(): String = format(DateTimeFormatter.ofPattern("MMM, YYYY", Locale("ru")))
 
     fun update() = viewModelScope.launch(Dispatchers.IO) {
         runCatching {
@@ -64,23 +63,26 @@ class HomeViewModel {
             var i = 0
             var count = 0
             while (i < 6 && count < 16) {
+                println("Started")
                 val varCus =
-                    ExchangeRatesRepository.getExchangeRates(
-                        ExchangeRatesDataProperty(
-                            localDate.minusMonths(
-                                count.times(
-                                    2
-                                ).toLong()
+                    ExchangeRepository.getExchanges(
+                        setOf(
+                            DateExcERProp(
+                                localDate.minusMonths(
+                                    count.times(2).toLong()
+                                )
                             )
                         )
-                    )
+                    ).also { println(it) }
                 if (lastFiveDay.add(varCus)) i++
                 count++
             }
             val varCus = lastFiveDay.first()
             val list = varCus.exchanges.mapIndexed { index, it ->
                 with(it) {
-                    ExchangePresentation(id = index,
+                    ExchangeItemState(
+                        exchange = this,
+                        id = index,
                         nominal = nominal.toString(),
                         value = "$value ₽",
                         charCode = charCode,

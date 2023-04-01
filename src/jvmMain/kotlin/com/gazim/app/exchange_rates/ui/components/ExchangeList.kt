@@ -1,12 +1,10 @@
 package com.gazim.app.exchange_rates.ui.components
 
-import androidx.compose.foundation.ScrollbarStyle
-import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,11 +13,12 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.gazim.app.exchange_rates.ui.model.ExchangePresentation
+import com.gazim.app.exchange_rates.ui.model.ExchangeItemState
+import com.gazim.library.exchange_rates.model.IExchange
 
-@OptIn(ExperimentalTextApi::class)
+@OptIn(ExperimentalTextApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun ExchangeList(exchanges: List<ExchangePresentation>, spacerHeight: Dp) {
+fun ExchangeList(exchanges: List<ExchangeItemState>, spacerHeight: Dp, onItemClick: (IExchange) -> Unit) {
     val scrollState = rememberLazyListState()
     val scrollAdapter = rememberScrollbarAdapter(scrollState)
     Box(Modifier) {
@@ -35,7 +34,8 @@ fun ExchangeList(exchanges: List<ExchangePresentation>, spacerHeight: Dp) {
                 ExchangeItem(
                     exchange = it,
                     styleOne = MaterialTheme.typography.headlineLarge,
-                    styleTwo = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Light)
+                    styleTwo = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Light),
+                    onItemClick = onItemClick
                 )
             }
         }

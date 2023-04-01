@@ -3,8 +3,9 @@ package com.gazim.app.exchange_rates.ui.screen.home_screen
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,10 +17,11 @@ import com.gazim.app.exchange_rates.ui.components.CustomTopBar
 import com.gazim.app.exchange_rates.ui.components.ExchangeList
 import com.gazim.app.exchange_rates.ui.model.HomeScreenState
 import com.gazim.app.exchange_rates.ui.model.NetworkResultStatus.*
+import com.gazim.library.exchange_rates.model.IExchange
 import java.time.LocalDate
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(viewModel: HomeViewModel, onItemClick: (IExchange) -> Unit) {
     remember { viewModel.getList(LocalDate.now()) }
     val homeScreenState by viewModel.homeScreenState.collectAsState()
     HomeScreenComponent(
@@ -27,7 +29,8 @@ fun HomeScreen(viewModel: HomeViewModel) {
         viewModel::getList,
         viewModel::update,
         homeScreenState.searchQuery,
-        viewModel::setQuery
+        viewModel::setQuery,
+        onItemClick
     )
 }
 
@@ -37,7 +40,8 @@ fun HomeScreenComponent(
     onDateChange: (LocalDate) -> Unit,
     onRefresh: () -> Unit,
     text: String,
-    onTextChange: (String) -> Unit
+    onTextChange: (String) -> Unit,
+    onItemClick: (IExchange) -> Unit
 ) {
     var calendarIsOpened by remember { mutableStateOf(false) }
     val blurDp by animateDpAsState(
@@ -49,7 +53,7 @@ fun HomeScreenComponent(
     Box(contentAlignment = Alignment.Center, modifier = Modifier.blur(blurDp)) {
         when (homeScreenState.isLoaded) {
             Loading -> CircularProgressIndicator()
-            Success -> ExchangeList(homeScreenState.exchanges, spacerHeight)
+            Success -> ExchangeList(homeScreenState.exchanges, spacerHeight, onItemClick = onItemClick)
             Failed -> Text(homeScreenState.errorMsg)
         }
         Box(Modifier.align(Alignment.TopCenter).onGloballyPositioned {
