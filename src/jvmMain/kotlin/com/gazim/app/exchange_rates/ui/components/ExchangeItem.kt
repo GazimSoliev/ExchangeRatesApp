@@ -1,10 +1,7 @@
 package com.gazim.app.exchange_rates.ui.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.onClick
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -67,7 +64,7 @@ fun ExchangeItem(
     val pointColor = MaterialTheme.colorScheme.secondary
     val markupLineColor = MaterialTheme.colorScheme.surfaceVariant
     val graphData by viewModel.state.collectAsState()
-    ElevatedCard(Modifier.onClick { onItemClick(exchange.exchange) }) {
+    ElevatedCard(Modifier.clickable { onItemClick(exchange.exchange) }) {
         Row {
             Row(
                 modifier = Modifier

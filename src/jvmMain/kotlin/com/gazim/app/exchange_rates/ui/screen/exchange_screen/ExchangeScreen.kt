@@ -1,13 +1,9 @@
 package com.gazim.app.exchange_rates.ui.screen.exchange_screen
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -17,7 +13,9 @@ class ExchangeScreen(private val exchangeScreenViewModel: ExchangeScreenViewMode
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        ExchangeScreenComponent {
+        rememberSaveable(this) { exchangeScreenViewModel.get() }
+        val exchangeScreenState by exchangeScreenViewModel.exchangeScreenState.collectAsState()
+        ExchangeScreenComponent(exchangeScreenState) {
             navigator.pop()
         }
     }

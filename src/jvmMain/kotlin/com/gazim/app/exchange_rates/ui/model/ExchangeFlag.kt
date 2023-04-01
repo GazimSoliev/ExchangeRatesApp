@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.gazim.app.exchange_rates.ui.model
 
 enum class ExchangeFlag(val flagResName: String, vararg exchanges: String) {

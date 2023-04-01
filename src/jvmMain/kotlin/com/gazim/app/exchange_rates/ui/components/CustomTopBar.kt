@@ -1,7 +1,9 @@
 package com.gazim.app.exchange_rates.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.onClick
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditCalendar
@@ -22,6 +24,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CustomTopBarItem(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
     Row(
@@ -29,7 +32,7 @@ fun CustomTopBarItem(modifier: Modifier = Modifier, content: @Composable RowScop
         modifier = modifier.fillMaxHeight().background(
             MaterialTheme.colorScheme.secondaryContainer,
             MaterialTheme.shapes.extraLarge
-        ),
+        ).onClick { },
         content = content
     )
 }
