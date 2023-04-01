@@ -40,6 +40,7 @@ class HomeViewModel {
     }
 
     fun getList(localDate: LocalDate) = viewModelScope.launch(Dispatchers.IO) {
+        println("Hellllllloooo")
         if (
             homeScreenState.value.date == localDate && clearList.isNotEmpty()
         ) return@launch

@@ -8,17 +8,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.gazim.app.exchange_rates.ui.components.ExchangeScreenComponent
 
-@Composable
-fun ExchangeScreen(exchangeScreenViewModel: ExchangeScreenViewModel, onBackButton: () -> Unit) {
-    Box(Modifier) {
-        FilledIconButton(modifier = Modifier.align(Alignment.TopStart), onClick = {onBackButton()}) {
-            Icon(Icons.Default.ArrowBack, "Back to Home Screen")
+class ExchangeScreen(private val exchangeScreenViewModel: ExchangeScreenViewModel) : Screen {
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+        ExchangeScreenComponent {
+            navigator.pop()
         }
     }
-}
-
-@Composable
-fun ExchangeScreenComponent() {
 
 }
