@@ -10,19 +10,31 @@ import kotlinx.coroutines.launch
 class GraphViewModel(val records: List<IRecord>) {
     val viewModel = CoroutineScope(Dispatchers.Default)
     val points = MutableStateFlow<List<Point>>(emptyList())
+    var sHeight = 0f
+    var sWidth = 0f
 
     fun get(height: Float, width: Float) =
         viewModel.launch(Dispatchers.Default) {
+            if (records.size < 2) {
+                points.value = emptyList()
+                return@launch
+            }
+            println("Test1324")
+            if (sHeight == height && sWidth == width) return@launch
+            println("Passed")
+            sHeight = height
+            sWidth = width
             var currentWidth = 0f
-            val max = records.maxOf { it.value }
-            val min = records.minOf { it.value }
+            val exchangeValues = records.map { it.value / it.nominal }
+            val max = exchangeValues.max()
+            val min = exchangeValues.min()
             val step = width / (records.size - 1)
             val offsetX = max - min
-            points.value = records.map {
+            points.value = exchangeValues.map {
                 currentWidth += step
                 Point(
                     x = currentWidth,
-                    y = (it.value - min) / offsetX * height
+                    y = height - (it - min) / offsetX * height
                 )
             }
         }
