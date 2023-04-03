@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.gazim.app.exchange_rates.ui.model.ExchangeItemState
 import com.gazim.library.exchange_rates.model.IExchange
 
-@OptIn(ExperimentalTextApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalTextApi::class)
 @Composable
 fun ExchangeList(exchanges: List<ExchangeItemState>, spacerHeight: Dp, onItemClick: (IExchange) -> Unit) {
     val scrollState = rememberLazyListState()

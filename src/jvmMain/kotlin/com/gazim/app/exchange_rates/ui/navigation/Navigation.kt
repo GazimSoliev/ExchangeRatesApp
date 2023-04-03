@@ -2,8 +2,9 @@ package com.gazim.app.exchange_rates.ui.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.gazim.app.exchange_rates.ui.screen.exchange_screen.ExchangeScreen
 import com.gazim.app.exchange_rates.ui.screen.exchange_screen.ExchangeScreenViewModel
@@ -11,7 +12,7 @@ import com.gazim.app.exchange_rates.ui.screen.home_screen.HomeScreen
 import com.gazim.app.exchange_rates.ui.screen.home_screen.HomeViewModel
 
 @Composable
-fun Navigation(modifier: Modifier = Modifier) {
+fun Navigation() {
     val currentRoute = remember {
         mutableStateListOf<Route>().apply {
             add(HomeScreenRoute)
